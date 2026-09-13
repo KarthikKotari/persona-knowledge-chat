@@ -97,3 +97,49 @@ a:hover {
   margin: 0 auto;
   padding: 2rem 1rem;
 }
+
+/* ── Persona Selector ───────────────────────────────────────── */
+.persona-selector {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.persona-card {
+  flex: 1;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 1rem 1.25rem;
+  background: var(--color-nav-bg);
+  border: 2px solid var(--color-nav-border);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.persona-card:hover {
+  border-color: var(--color-link);
+}
+
+.persona-card--active {
+  border-color: var(--color-link);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-link) 20%, transparent);
+  background: color-mix(in srgb, var(--color-link) 8%, var(--color-nav-bg));
+}
+
+.persona-card__name {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.persona-card__description {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  opacity: 0.75;
+}
