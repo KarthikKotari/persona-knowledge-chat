@@ -387,3 +387,108 @@ a:hover {
 @keyframes chat-spin {
   to { transform: rotate(360deg); }
 }
+
+/* ── KB Viewer ───────────────────────────────────────────────── */
+.kb-viewer__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.kb-viewer__item {
+  border: 1px solid var(--color-nav-border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kb-viewer__item:hover {
+  border-color: var(--color-link);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-link) 12%, transparent);
+}
+
+.kb-viewer__link {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.875rem 1.125rem;
+  color: var(--color-fg);
+  text-decoration: none;
+  background: var(--color-nav-bg);
+}
+
+.kb-viewer__link:hover {
+  text-decoration: none;
+  color: var(--color-link);
+}
+
+.kb-viewer__doc-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.kb-viewer__doc-filename {
+  font-size: 0.8125rem;
+  font-family: monospace;
+  opacity: 0.55;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Shared state container (loading / empty / error) */
+.kb-viewer__state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 2rem;
+  text-align: center;
+  border: 1px solid var(--color-nav-border);
+  border-radius: 8px;
+  background: var(--color-nav-bg);
+  opacity: 0.85;
+}
+
+.kb-viewer__state--empty {
+  opacity: 0.6;
+}
+
+.kb-viewer__state--error {
+  background: color-mix(in srgb, #ef4444 8%, var(--color-bg));
+  border-color: color-mix(in srgb, #ef4444 35%, transparent);
+  color: #ef4444;
+  opacity: 1;
+}
+
+.kb-viewer__empty-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.kb-viewer__empty-description {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.kb-viewer__empty-description code {
+  font-family: monospace;
+  padding: 0.1em 0.35em;
+  background: var(--color-nav-border);
+  border-radius: 4px;
+  font-size: 0.875em;
+}
+
+/* Loading spinner */
+.kb-viewer__spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--color-nav-border);
+  border-top-color: var(--color-link);
+  border-radius: 50%;
+  animation: chat-spin 0.7s linear infinite;
+}
