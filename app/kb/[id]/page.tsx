@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { DocumentMeta } from "@/lib/types";
 
@@ -11,7 +11,6 @@ interface DocumentDetail extends DocumentMeta {
 
 export default function KBDocumentPage() {
   const params = useParams();
-  const router = useRouter();
   const id = params?.id as string | undefined;
 
   const [document, setDocument] = useState<DocumentDetail | null>(null);
