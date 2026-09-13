@@ -143,3 +143,47 @@ a:hover {
   line-height: 1.4;
   opacity: 0.75;
 }
+
+/* ── Source List ─────────────────────────────────────────────── */
+.source-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.625rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--color-nav-border);
+}
+
+.source-list__label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.source-list__items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.source-list__item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.source-list__title {
+  font-weight: 500;
+  color: var(--color-fg);
+}
+
+.source-list__filename {
+  font-size: 0.75rem;
+  opacity: 0.55;
+  font-family: monospace;
+}
