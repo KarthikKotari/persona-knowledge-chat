@@ -187,3 +187,42 @@ a:hover {
   opacity: 0.55;
   font-family: monospace;
 }
+
+/* ── Message Bubble ──────────────────────────────────────────── */
+.message-bubble {
+  display: flex;
+  flex-direction: column;
+  max-width: 75%;
+}
+
+.message-bubble--user {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.message-bubble--assistant {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+
+.message-bubble__content {
+  padding: 0.625rem 0.875rem;
+  border-radius: 12px;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.message-bubble--user .message-bubble__content {
+  background: var(--color-link);
+  color: #ffffff;
+  border-bottom-right-radius: 3px;
+}
+
+.message-bubble--assistant .message-bubble__content {
+  background: var(--color-nav-bg);
+  border: 1px solid var(--color-nav-border);
+  color: var(--color-fg);
+  border-bottom-left-radius: 3px;
+}
