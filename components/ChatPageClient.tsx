@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import PersonaSelector from "@/components/PersonaSelector";
-import { PersonaMeta } from "@/lib/types";
+import ChatWindow from "@/components/ChatWindow";
+import { PersonaMeta, Message, ChatMessage } from "@/lib/types";
 
 interface ChatPageClientProps {
   personas: PersonaMeta[];
@@ -10,11 +11,58 @@ interface ChatPageClientProps {
 
 export default function ChatPageClient({ personas }: ChatPageClientProps) {
   const [activePersona, setActivePersona] = useState<PersonaMeta>(personas[0]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   function handleSelectPersona(id: string) {
     const found = personas.find((p) => p.id === id);
     if (found && found.id !== activePersona.id) {
       setActivePersona(found);
+      setMessages([]);
+      setError(null);
+    }
+  }
+
+  async function handleSend(text: string) {
+    setLoading(true);
+    setError(null);
+
+    // Build history from current messages before appending the new user message
+    const history: ChatMessage[] = messages.map(({ role, content }) => ({
+      role,
+      content,
+    }));
+
+    // Optimistically append the user message
+    setMessages((prev) => [...prev, { role: "user", content: text }]);
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: text,
+          personaId: activePersona.id,
+          history,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      const { reply, sources } = data;
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: reply, sources },
+      ]);
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -25,26 +73,13 @@ export default function ChatPageClient({ personas }: ChatPageClientProps) {
         activeId={activePersona.id}
         onSelect={handleSelectPersona}
       />
-
-      {/* Placeholder chat area — will be replaced by ChatWindow */}
-      <div
-        style={{
-          border: "1px dashed var(--color-nav-border)",
-          borderRadius: 8,
-          padding: "2rem",
-          minHeight: 320,
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-        }}
-      >
-        <p style={{ fontSize: "0.9rem" }}>
-          <strong>Active persona:</strong> {activePersona.name}
-        </p>
-        <p style={{ fontSize: "0.85rem", opacity: 0.6 }}>
-          Chat window 
-        </p>
-      </div>
+      <ChatWindow
+        persona={activePersona}
+        messages={messages}
+        onSend={handleSend}
+        loading={loading}
+        error={error}
+      />
     </div>
   );
 }
