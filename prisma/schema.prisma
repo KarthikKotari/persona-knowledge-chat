@@ -1,0 +1,27 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Document {
+  id        Int      @id @default(autoincrement())
+  filename  String   @unique
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  chunks    Chunk[]
+}
+
+model Chunk {
+  id         Int      @id @default(autoincrement())
+  content    String
+  position   Int
+  documentId Int
+  document   Document @relation(fields: [documentId], references: [id])
+}
