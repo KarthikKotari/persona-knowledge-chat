@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildSystemMessage } from "../openai";
+import { buildSystemMessage } from "../llm";
 import { RetrievedChunk } from "../retrieval";
 
 const makeChunk = (title: string, filename: string, content: string): RetrievedChunk => ({

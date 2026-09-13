@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ChatMessage } from "./types";
 import { RetrievedChunk } from "./retrieval";
 
@@ -26,22 +26,27 @@ export async function chatWithPersona(
   history: ChatMessage[],
   userMessage: string,
 ): Promise<string> {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) throw new Error("OPENAI_API_KEY is not configured");
+  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  if (!apiKey) throw new Error("GOOGLE_GENERATIVE_AI_API_KEY is not configured");
 
-  const client = new OpenAI({ apiKey });
+  const client = new GoogleGenerativeAI(apiKey);
   const systemContent = buildSystemMessage(personaSystemPrompt, chunks);
 
-  const messages: OpenAI.ChatCompletionMessageParam[] = [
-    { role: "system", content: systemContent },
-    ...history.map((m) => ({ role: m.role, content: m.content })),
-    { role: "user", content: userMessage },
-  ];
-
-  const response = await client.chat.completions.create({
-    model: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
-    messages,
+  const model = client.getGenerativeModel({
+    model: process.env.GEMINI_MODEL ?? "gemini-2.5-flash",
+    systemInstruction: systemContent,
   });
 
-  return response.choices[0]?.message?.content ?? "";
+  // Gemini uses "model" for assistant turns; map history accordingly.
+  const contents = [
+    ...history.map((m) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }],
+    })),
+    { role: "user", parts: [{ text: userMessage }] },
+  ];
+
+  const response = await model.generateContent({ contents });
+
+  return response.response.text() ?? "";
 }

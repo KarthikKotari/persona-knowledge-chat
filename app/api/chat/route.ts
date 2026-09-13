@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
 import { retrieveChunks } from "@/lib/retrieval";
 import { personaMap } from "@/lib/personas";
-import { chatWithPersona } from "@/lib/openai";
+import { chatWithPersona } from "@/lib/llm";
 import { ChatMessage, PersonaId, SourceRef } from "@/lib/types";
 
 function deduplicateSources(sources: SourceRef[]): SourceRef[] {
@@ -16,7 +15,7 @@ function deduplicateSources(sources: SourceRef[]): SourceRef[] {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   // Early guard: require API key before doing any work
-  if (!process.env.OPENAI_API_KEY) {
+  if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
     return NextResponse.json(
       { error: "Server configuration error: API key is not set." },
       { status: 500 },
@@ -87,16 +86,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ reply, sources }, { status: 200 });
   } catch (err: unknown) {
-    if (err instanceof OpenAI.APIError) {
-      return NextResponse.json(
-        { error: "The AI service returned an error. Please try again." },
-        { status: 502 },
-      );
-    }
-    if (err instanceof Error && err.message.includes("OPENAI_API_KEY")) {
+    if (err instanceof Error && err.message.includes("GOOGLE_GENERATIVE_AI_API_KEY")) {
       return NextResponse.json(
         { error: "Server configuration error: API key is not set." },
         { status: 500 },
+      );
+    }
+    if (
+      err instanceof Error &&
+      (err.name.startsWith("GoogleGenerativeAI") ||
+        err.message.includes("GoogleGenerativeAI"))
+    ) {
+      return NextResponse.json(
+        { error: "The AI service returned an error. Please try again." },
+        { status: 502 },
       );
     }
     return NextResponse.json({ error: "An unexpected error occurred." }, { status: 500 });
